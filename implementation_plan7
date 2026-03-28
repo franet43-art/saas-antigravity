@@ -1,0 +1,28 @@
+# Mission 5 - Interface d'Authentification (UI)
+
+Ce plan détaille la création des pages de connexion et d'inscription pour la plateforme GabWork.
+
+## Changements Proposés
+
+### Authentification UI
+
+#### [NEW] [login/page.tsx](file:///c:/Users/Dell/Desktop/saas-antigravity/src/app/login/page.tsx)
+- Création d'une page de connexion épurée et centrée.
+- Utilisation des composants `Card`, `Input`, `Label` et `Button` de shadcn.
+- Intégration de `supabase.auth.signInWithPassword()`.
+- Gestion des états de chargement et d'erreur.
+- Redirection vers `/dashboard` après succès via `router.push()`.
+
+#### [NEW] [signup/page.tsx](file:///c:/Users/Dell/Desktop/saas-antigravity/src/app/signup/page.tsx)
+- Création d'une page d'inscription professionnelle.
+- Utilisation des composants shadcn.
+- Intégration de `supabase.auth.signUp()`.
+- Gestion des états de chargement et d'erreur.
+- Redirection vers `/dashboard` après succès.
+
+## Plan de Vérification
+
+### Tests Manuels
+1. **Login** : Tester avec des identifiants valides et invalides. Vérifier l'affichage des erreurs et le loader sur le bouton.
+2. **Signup** : Créer un nouveau compte. Vérifier la redirection et la gestion des erreurs (ex: email déjà pris).
+3. **Design** : S'assurer que les pages sont centrées et esthétiques en utilisant Tailwind CSS v4.
