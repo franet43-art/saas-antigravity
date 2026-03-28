@@ -55,7 +55,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Profils Vérifiés</h3>
               <p className="text-muted-foreground">
-                Chaque profil est validé manuellement par notre équipe pour vous garantir des prestations de qualité et de confiance.
+                Chaque profil est soumis à validation avant d'apparaître dans le catalogue.
               </p>
             </div>
           </div>
