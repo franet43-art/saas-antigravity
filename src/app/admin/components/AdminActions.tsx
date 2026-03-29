@@ -108,14 +108,14 @@ export default function AdminActions({ profile }: { profile: Profile }) {
               type="button"
               variant="default"
               className="bg-green-600 hover:bg-green-700"
-              onClick={() => handleStatusUpdate('active')}
+              onClick={() => handleStatusUpdate('valide')}
               disabled={isLoading}
             >
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
               Activer le profil
             </Button>
           )}
-          {profile.status === 'active' && (
+          {profile.status === 'valide' && (
             <Button
               type="button"
               variant="destructive"

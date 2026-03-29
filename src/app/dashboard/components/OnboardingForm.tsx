@@ -31,9 +31,7 @@ const formSchema = z.object({
   full_name: z.string().min(3, {
     message: 'Le nom complet doit contenir au moins 3 caractères.',
   }),
-  role: z.enum(['client', 'freelance'], {
-    required_error: 'Veuillez sélectionner un rôle.',
-  }),
+  role: z.enum(['client', 'freelance'], { error: 'Veuillez sélectionner un rôle.' }),
   whatsapp_number: z.string().optional(),
 }).refine((data) => {
   if (data.role === 'freelance' && (!data.whatsapp_number || data.whatsapp_number.trim() === '')) {
@@ -76,6 +74,7 @@ export default function OnboardingForm() {
         .update({
           full_name: values.full_name,
           role: values.role,
+          status: values.role === 'client' ? 'valide' : 'en_attente',
         })
         .eq('id', user.id);
 

@@ -69,7 +69,7 @@ export default async function AdminDashboard() {
                 <TableCell className="font-medium">{p.full_name || 'Non défini'}</TableCell>
                 <TableCell className="capitalize">{p.role}</TableCell>
                 <TableCell>
-                  {p.status === 'active' ? (
+                  {p.status === 'valide' ? (
                     <Badge variant="default" className="bg-green-600 hover:bg-green-700">Actif</Badge>
                   ) : p.status === 'en_attente' ? (
                     <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-700 hover:bg-yellow-500/30 border-yellow-500/50">En attente</Badge>
