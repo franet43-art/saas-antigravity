@@ -33,7 +33,7 @@ const formSchema = z.object({
     message: 'Votre biographie doit contenir au moins 10 caractères.',
   }),
   category: z.string({
-    required_error: 'Veuillez sélectionner une catégorie.',
+    error: 'Veuillez sélectionner une catégorie.',
   }),
   custom_category: z.string().optional(),
   hourly_rate: z.coerce.number().min(0, {
