@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,6 @@ import { Badge } from '@/components/ui/badge';
 
 interface Profile {
   id: string;
-  user_id: string;
   full_name: string;
   role: string;
   status: string;
@@ -31,7 +30,7 @@ export default function AdminActions({ profile }: { profile: Profile }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const handleStatusUpdate = async (newStatus: string) => {
     try {

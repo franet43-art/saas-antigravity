@@ -27,7 +27,7 @@ export default async function AdminDashboard() {
   const { data: profile } = await supabase
     .from('profiles')
     .select('is_admin')
-    .eq('user_id', user.id)
+    .eq('id', user.id)
     .single();
 
   if (!profile || profile.is_admin !== true) {
@@ -36,7 +36,7 @@ export default async function AdminDashboard() {
 
   const { data: allProfiles, error } = await supabase
     .from('profiles')
-    .select('id, user_id, full_name, role, status, created_at, bio, category')
+    .select('id, full_name, role, status, created_at, bio, category')
     .order('created_at', { ascending: false });
 
   if (error) {
