@@ -17,6 +17,7 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -33,6 +34,14 @@ const formSchema = z.object({
   }),
   role: z.enum(['client', 'freelance'], { error: 'Veuillez sélectionner un rôle.' }),
   whatsapp_number: z.string().optional(),
+  portfolio_url: z.string()
+    .url({ message: "Veuillez entrer une URL valide (ex: https://...)" })
+    .optional()
+    .or(z.literal('')),
+  category: z.enum(['Developpement', 'Design', 'Marketing', 'Redaction', 'Multimedia', 'Assistance', 'Comptabilite', 'Autre']).optional(),
+  custom_category: z.string().optional(),
+  hourly_rate: z.coerce.number().positive().optional().or(z.literal('')),
+  bio: z.string().max(500).optional(),
 }).refine((data) => {
   if (data.role === 'freelance' && (!data.whatsapp_number || data.whatsapp_number.trim() === '')) {
     return false;
@@ -55,6 +64,11 @@ export default function OnboardingForm() {
       full_name: '',
       role: 'client',
       whatsapp_number: '',
+      portfolio_url: '',
+      category: undefined,
+      custom_category: '',
+      hourly_rate: '' as unknown as number,
+      bio: '',
     },
   });
 
@@ -75,6 +89,12 @@ export default function OnboardingForm() {
           full_name: values.full_name,
           role: values.role,
           status: values.role === 'client' ? 'valide' : 'en_attente',
+          ...(values.role === 'freelance' && {
+            category: values.category,
+            custom_category: values.category === 'Autre' ? values.custom_category : null,
+            hourly_rate: values.hourly_rate || null,
+            bio: values.bio || null,
+          }),
         })
         .eq('id', user.id);
 
@@ -87,6 +107,7 @@ export default function OnboardingForm() {
           .upsert({
             id: user.id,
             whatsapp_number: values.whatsapp_number,
+            portfolio_url: values.portfolio_url || null,
           });
 
         if (contactError) throw contactError;
@@ -94,10 +115,15 @@ export default function OnboardingForm() {
 
       form.reset();
       setIsLoading(false);
-      router.refresh();
+      if (values.role === 'client') {
+        router.push('/freelances');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Une erreur est survenue lors de la mise à jour.';
       setError(message);
+    } finally {
       setIsLoading(false);
     }
   }
@@ -157,7 +183,7 @@ export default function OnboardingForm() {
           />
 
           {selectedRole === 'freelance' && (
-            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
               <FormField
                 control={form.control}
                 name="whatsapp_number"
@@ -166,14 +192,120 @@ export default function OnboardingForm() {
                     <FormLabel>Numéro WhatsApp (Obligatoire pour les freelances)</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="+241 00 00 00 00" 
+                        placeholder="+241 77 00 00 00 ou +33 6 00 00 00 00" 
                         type="tel"
                         disabled={isLoading} 
                         {...field} 
                       />
                     </FormControl>
                     <FormDescription>
-                      Les clients vous contacteront via ce numéro.
+                      Entrez votre numéro avec l'indicatif pays (ex: +241, +33, +1...)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="portfolio_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lien Portfolio (optionnel)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://www.behance.net/monprofil"
+                        type="url"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Behance, GitHub, Instagram, Dribbble... Partagez vos meilleures réalisations.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Catégorie</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                      disabled={isLoading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez un domaine d'expertise" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Developpement">Développement</SelectItem>
+                        <SelectItem value="Design">Design</SelectItem>
+                        <SelectItem value="Marketing">Marketing</SelectItem>
+                        <SelectItem value="Redaction">Rédaction</SelectItem>
+                        <SelectItem value="Multimedia">Multimédia</SelectItem>
+                        <SelectItem value="Assistance">Assistance</SelectItem>
+                        <SelectItem value="Comptabilite">Comptabilité</SelectItem>
+                        <SelectItem value="Autre">Autre</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {form.watch('category') === 'Autre' && (
+                <FormField
+                  control={form.control}
+                  name="custom_category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Précisez votre catégorie</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Votre domaine..." disabled={isLoading} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <FormField
+                control={form.control}
+                name="hourly_rate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Taux horaire (XAF)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="Ex: 5000" disabled={isLoading} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bio</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Parlez-nous de vous..." 
+                        className="resize-none"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Une courte description de votre profil (max. 500 caractères).
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

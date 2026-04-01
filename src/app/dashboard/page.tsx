@@ -4,7 +4,18 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { upgradeToFreelance } from './actions';
 import OnboardingForm from './components/OnboardingForm';
+
+function formatStatus(status: string) {
+  switch (status) {
+    case 'valide': return 'Validé ✓';
+    case 'en_attente': return 'En attente de validation';
+    case 'rejete': return 'Rejeté';
+    default: return status;
+  }
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -81,12 +92,55 @@ export default async function DashboardPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Statut</span>
-                <Badge className={profile.status === 'active' ? 'bg-green-500 hover:bg-green-600' : ''}>
-                  {profile.status || 'En attente'}
+                <Badge className={
+                  profile.status === 'valide'
+                    ? 'bg-green-500 hover:bg-green-600' 
+                    : profile.status === 'en_attente'
+                      ? 'bg-amber-500 hover:bg-amber-600'
+                      : 'bg-red-500 hover:bg-red-600'
+                }>
+                  {formatStatus(profile.status || 'en_attente')}
                 </Badge>
               </div>
             </CardContent>
           </Card>
+          {profile.role === 'freelance' && (
+            <Card className="shadow-sm hover:shadow-md transition-shadow">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                  Votre Vitrine
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Mettez à jour votre bio, votre tarif et votre portfolio.
+                </p>
+                <Button asChild size="sm" variant="outline" className="w-full">
+                  <Link href="/dashboard/profile">Modifier mon profil</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {profile.role === 'client' && (
+            <Card className="shadow-sm hover:shadow-md transition-shadow border-primary/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                  Vous avez des compétences ?
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Proposez vos services et rejoignez nos freelances vérifiés.
+                </p>
+                <form action={upgradeToFreelance}>
+                  <Button type="submit" size="sm" className="w-full">
+                    Devenir Freelance
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
     </div>

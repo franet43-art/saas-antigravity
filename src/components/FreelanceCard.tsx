@@ -1,7 +1,4 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { User, MessageCircle } from 'lucide-react';
+import { User } from 'lucide-react';
 import Link from 'next/link';
 
 interface FreelanceCardProps {
@@ -10,7 +7,8 @@ interface FreelanceCardProps {
   category: string | null;
   custom_category: string | null;
   hourly_rate: number | null;
-  bio: string | null;
+  bio: string | null; // Conservé pour la prop interface
+  avatar_url: string | null;
 }
 
 export default function FreelanceCard({
@@ -19,52 +17,43 @@ export default function FreelanceCard({
   category,
   custom_category,
   hourly_rate,
-  bio,
+  avatar_url,
 }: FreelanceCardProps) {
-  // Logic category vs custom_category
   const displayCategory = category === 'Autre' && custom_category ? custom_category : category;
 
-  // Bio truncation (max 100 chars) with null safety
-  const truncatedBio = bio ? (bio.length > 100 ? `${bio.substring(0, 100)}...` : bio) : "Aucune biographie renseignée.";
-
   return (
-    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow border-primary/10 overflow-hidden group">
-      <CardHeader className="bg-muted/30 pb-4">
-        <div className="flex justify-between items-start gap-4">
-          <div className="space-y-1">
-            <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors line-clamp-1">
-              {full_name || 'Anonyme'}
-            </CardTitle>
-            <Badge variant="secondary" className="font-medium">
-              {displayCategory || 'Secteur non défini'}
-            </Badge>
-          </div>
-          <div className="bg-primary/10 p-2 rounded-full text-primary">
-            <User className="h-5 w-5" />
-          </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="flex-grow pt-4">
-        <p className="text-sm text-muted-foreground leading-relaxed italic">
-          &ldquo;{truncatedBio}&rdquo;
-        </p>
-      </CardContent>
+    <div className="p-4 flex flex-col items-center text-center rounded-xl bg-card border hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] hover:scale-[1.02] transition-all h-full">
+      {/* 1. Avatar placeholder */}
+      <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center shrink-0 mb-3 overflow-hidden">
+        {avatar_url ? (
+          <img src={avatar_url} alt={full_name || 'Avatar'} className="w-full h-full object-cover" />
+        ) : (
+          <User className="h-8 w-8 text-muted-foreground" />
+        )}
+      </div>
 
-      <CardFooter className="flex flex-col gap-4 border-t pt-4 bg-muted/5">
-        <div className="flex items-center justify-between w-full">
-          <div>
-            <span className="text-xs text-muted-foreground uppercase font-semibold">Tarif</span>
-            <p className="text-lg font-bold text-primary">
-              {hourly_rate ? `${hourly_rate.toLocaleString()} FCFA` : 'Sur devis'}
-              <span className="text-xs font-normal text-muted-foreground ml-1">/h</span>
-            </p>
-          </div>
-          <Button size="sm" variant="outline" asChild>
-            <Link href={`/freelances/${id}`}>Voir Profil</Link>
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+      {/* 2. Nom */}
+      <h3 className="font-bold text-sm leading-tight text-foreground mb-1 line-clamp-1">
+        {full_name || 'Anonyme'}
+      </h3>
+
+      {/* 3. Badge catégorie */}
+      <span className="bg-secondary text-secondary-foreground text-[10px] font-medium uppercase tracking-widest rounded-full px-2 py-0.5 mb-auto line-clamp-1">
+        {displayCategory || 'Secteur non défini'}
+      </span>
+
+      {/* 4. Tarif */}
+      <div className="text-xs font-semibold mt-4 mb-3">
+        {hourly_rate ? `${hourly_rate.toLocaleString()} FCFA/h` : 'Sur devis'}
+      </div>
+
+      {/* 5. Bouton "Voir Profil" */}
+      <Link 
+        href={`/freelances/${id}`}
+        className="block w-full py-2 rounded-full text-[11px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+      >
+        Voir Profil
+      </Link>
+    </div>
   );
 }

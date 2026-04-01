@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -20,7 +21,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
-  email: z.string().email({
+  email: z.string().trim().email({
     message: 'Veuillez entrer une adresse email valide.',
   }),
   password: z.string().min(6, {
@@ -29,11 +30,13 @@ const formSchema = z.object({
 });
 
 export default function SignupForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,8 +66,16 @@ export default function SignupForm() {
 
       setSuccess(true);
       form.reset();
-    } catch (err: any) {
-      setError(err.message || "Une erreur est survenue lors de l'inscription.");
+
+      const rawRedirect = searchParams.get('redirectTo') || '/dashboard';
+      const redirectTo = rawRedirect.startsWith('/') ? rawRedirect : '/dashboard';
+      setTimeout(() => router.push(redirectTo), 1500);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Une erreur est survenue lors de l'inscription.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +94,7 @@ export default function SignupForm() {
           <Alert className="bg-green-50 border-green-200 text-green-800 animate-in fade-in slide-in-from-top-2 duration-300">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertDescription className="font-medium">
-              Inscription réussie ! Veuillez vérifier votre boîte mail pour confirmer votre compte.
+              Inscription réussie ! Redirection en cours...
             </AlertDescription>
           </Alert>
         )}

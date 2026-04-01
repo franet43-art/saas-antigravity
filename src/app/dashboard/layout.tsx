@@ -1,63 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
-import Link from 'next/link';
-import { 
-  LayoutDashboard, 
-  User, 
-  Settings, 
-  Menu,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { Separator } from '@/components/ui/separator';
-import LogoutButton from './components/LogoutButton';
-
-const sidebarLinks = [
-  { href: '/dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
-  { href: '/dashboard/profile', label: 'Profil', icon: User },
-  { href: '/dashboard/settings', label: 'Paramètres', icon: Settings },
-];
-
-const SidebarContent = ({ role }: { role?: string }) => {
-  const filteredLinks = sidebarLinks.filter(link => {
-    if (role === 'client' && link.href === '/dashboard/profile') {
-      return false;
-    }
-    return true;
-  });
-
-  return (
-    <div className="flex flex-col h-full py-4 px-3">
-      <div className="px-3 py-2">
-        <h2 className="text-xl font-bold tracking-tight mb-4 text-primary">
-          GabWork
-        </h2>
-        <div className="space-y-1">
-          {filteredLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-accent transition-colors group"
-            >
-              <link.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-auto px-3">
-        <Separator className="my-4" />
-        <LogoutButton />
-      </div>
-    </div>
-  );
-};
+import { User } from 'lucide-react';
+import SidebarContent from './components/SidebarContent';
+import MobileSidebar from './components/MobileSidebar';
 
 export default async function DashboardLayout({
   children,
@@ -89,19 +33,7 @@ export default async function DashboardLayout({
         <header className="sticky top-0 z-40 flex h-16 items-center border-b bg-background px-4 shadow-sm lg:px-8">
           <div className="flex flex-1 items-center justify-between">
             <div className="flex items-center lg:hidden">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-64">
-                  <SheetHeader className="sr-only">
-                    <SheetTitle>Menu de navigation</SheetTitle>
-                  </SheetHeader>
-                  <SidebarContent role={role} />
-                </SheetContent>
-              </Sheet>
+              <MobileSidebar role={role} />
               <h2 className="ml-3 text-lg font-bold text-primary lg:hidden">
                 GabWork
               </h2>

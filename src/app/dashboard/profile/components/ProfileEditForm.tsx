@@ -94,17 +94,18 @@ export default function ProfileEditForm({ initialData }: ProfileEditFormProps) {
           category: values.category,
           custom_category: values.category === 'Autre' ? values.custom_category : null,
           hourly_rate: values.hourly_rate,
-          status: 'active',
-          updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
 
       if (updateError) throw updateError;
 
       setSuccess(true);
+      setIsLoading(false);
       router.refresh();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Une erreur est survenue lors de la mise à jour.';
+      console.error("Erreur complète Profil:", err);
+      const typedErr = err as any;
+      const message = typedErr?.message || typedErr?.details || 'Erreur lors de la mise à jour.';
       setError(message);
     } finally {
       setIsLoading(false);

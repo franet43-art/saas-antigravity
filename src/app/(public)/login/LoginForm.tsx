@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useMemo } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -26,9 +26,10 @@ const loginSchema = z.object({
 
 export default function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -44,21 +45,27 @@ export default function LoginForm() {
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
+        email: values.email.trim(),
         password: values.password,
       })
 
       if (error) {
-        setError("Identifiants incorrects ou erreur de connexion.")
-        setIsLoading(false)
+        setError(error.message || "Identifiants incorrects ou erreur de connexion.")
         return
       }
 
-      router.push("/dashboard")
-      router.refresh()
       setIsLoading(false)
-    } catch (e) {
-      setError("Une erreur inattendue est survenue.")
+      const rawRedirect = searchParams.get('redirectTo') || '/dashboard';
+      const redirectTo = rawRedirect.startsWith('/') ? rawRedirect : '/dashboard';
+      router.push(redirectTo);
+      router.refresh()
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError("Une erreur inattendue est survenue.")
+      }
+    } finally {
       setIsLoading(false)
     }
   }
@@ -131,7 +138,7 @@ export default function LoginForm() {
              className="p-0 h-auto font-bold text-primary hover:no-underline"
              onClick={() => router.push("/signup")}
           >
-            S'inscrire gratuitement
+            S&apos;inscrire gratuitement
           </Button>
         </div>
       </CardContent>

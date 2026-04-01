@@ -8,11 +8,11 @@ export default async function Navbar() {
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background shadow-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <nav className="sticky top-0 z-50 w-full border-b bg-background shadow-sm overflow-x-hidden">
+      <div className="container mx-auto flex items-center justify-between px-4 md:px-6 py-4">
         {/* Left: Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-black tracking-tighter">
+          <span className="text-2xl font-black tracking-tighter">
             Gab<span className="text-primary">Work</span>
           </span>
         </Link>
@@ -25,10 +25,10 @@ export default async function Navbar() {
         </div>
 
         {/* Right: Auth Actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-2">
           {!user ? (
             <>
-              <Button variant="ghost" asChild size="sm">
+              <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
                 <Link href="/login">Se connecter</Link>
               </Button>
               <Button asChild size="sm">
@@ -37,10 +37,15 @@ export default async function Navbar() {
             </>
           ) : (
             <>
-              <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
+              <Button variant="ghost" asChild size="sm" className="hidden md:flex">
                 <Link href="/dashboard">Mon Dashboard</Link>
               </Button>
-              <LogoutButton />
+              <div className="hidden md:flex">
+                <LogoutButton />
+              </div>
+              <Button variant="ghost" asChild size="sm" className="flex md:hidden">
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
             </>
           )}
         </div>
