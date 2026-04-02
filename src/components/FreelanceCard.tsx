@@ -9,6 +9,7 @@ interface FreelanceCardProps {
   hourly_rate: number | null;
   bio: string | null; // Conservé pour la prop interface
   avatar_url: string | null;
+  index?: number;
 }
 
 export default function FreelanceCard({
@@ -18,11 +19,15 @@ export default function FreelanceCard({
   custom_category,
   hourly_rate,
   avatar_url,
+  index = 0,
 }: FreelanceCardProps) {
   const displayCategory = category === 'Autre' && custom_category ? custom_category : category;
 
   return (
-    <div className="p-4 flex flex-col items-center text-center rounded-xl bg-card border hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] hover:scale-[1.02] transition-all h-full">
+    <div
+      className="p-4 flex flex-col items-center text-center rounded-xl bg-card border hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] hover:scale-[1.02] active:scale-95 transition-all h-full animate-card-in"
+      style={{ animationDelay: `${index * 80}ms` }}
+    >
       {/* 1. Avatar placeholder */}
       <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center shrink-0 mb-3 overflow-hidden">
         {avatar_url ? (
@@ -50,7 +55,7 @@ export default function FreelanceCard({
       {/* 5. Bouton "Voir Profil" */}
       <Link 
         href={`/freelances/${id}`}
-        className="block w-full py-2 rounded-full text-[11px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+        className="block w-full py-2 rounded-full text-[11px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md active:scale-95 transition-all duration-200"
       >
         Voir Profil
       </Link>

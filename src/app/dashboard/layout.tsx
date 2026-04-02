@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { User } from 'lucide-react';
+import Link from 'next/link';
 import SidebarContent from './components/SidebarContent';
 import MobileSidebar from './components/MobileSidebar';
 
@@ -34,9 +35,11 @@ export default async function DashboardLayout({
           <div className="flex flex-1 items-center justify-between">
             <div className="flex items-center lg:hidden">
               <MobileSidebar role={role} />
-              <h2 className="ml-3 text-lg font-bold text-primary lg:hidden">
-                GabWork
-              </h2>
+              <Link href="/" className="ml-3">
+                <h2 className="text-lg font-bold text-primary hover:opacity-80 transition-opacity lg:hidden">
+                  GabWork
+                </h2>
+              </Link>
             </div>
             
             <div className="hidden lg:block">

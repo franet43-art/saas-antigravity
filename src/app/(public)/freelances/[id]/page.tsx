@@ -216,7 +216,7 @@ export default async function FreelanceDetailPage({ params }: PageProps) {
           
           <CardFooter className="pt-2">
             {isConnected && whatsappNumber ? (
-              <Button className="w-full h-12 gap-2 text-base font-bold shadow-lg shadow-green-500/20 bg-green-600 hover:bg-green-700 active:scale-95 transition-all" asChild>
+              <Button className="w-full h-12 gap-2 text-base font-bold shadow-lg shadow-green-500/20 bg-green-600 hover:bg-green-700 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 animate-pulse-whatsapp" asChild>
                 <a
                   href={`https://wa.me/${whatsappNumber.replace(/\+/g, '').replace(/\s/g, '')}`}
                   target="_blank"
@@ -227,7 +227,7 @@ export default async function FreelanceDetailPage({ params }: PageProps) {
                 </a>
               </Button>
             ) : (
-              <Button className="w-full h-12 gap-2 text-base font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all" asChild>
+              <Button className="w-full h-12 gap-2 text-base font-bold shadow-lg shadow-primary/20 hover:-translate-y-0.5 active:scale-95 transition-all duration-200" asChild>
                 <Link href={`/login?redirectTo=/freelances/${id}`}>
                   <MessageCircle className="h-5 w-5" />
                   Voir le contact WhatsApp
@@ -252,7 +252,7 @@ export default async function FreelanceDetailPage({ params }: PageProps) {
             href={`https://wa.me/${whatsappNumber.replace(/\+/g, '').replace(/\s/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full h-12 rounded-full text-base font-bold bg-green-600 hover:bg-green-700 text-white transition-all shadow-lg"
+            className="flex items-center justify-center gap-2 w-full h-12 rounded-full text-base font-bold bg-green-600 hover:bg-green-700 text-white active:scale-95 transition-all duration-200 shadow-lg animate-pulse-whatsapp"
           >
             <MessageCircle className="h-5 w-5" />
             Contacter sur WhatsApp

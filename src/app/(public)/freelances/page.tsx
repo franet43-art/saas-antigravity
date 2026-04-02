@@ -57,7 +57,7 @@ export default async function CataloguePage(props: { searchParams?: Promise<{ q?
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-        {freelances?.map((freelance) => (
+        {freelances?.map((freelance, index) => (
           <FreelanceCard 
             key={freelance.id}
             id={freelance.id}
@@ -67,6 +67,7 @@ export default async function CataloguePage(props: { searchParams?: Promise<{ q?
             hourly_rate={freelance.hourly_rate}
             bio={freelance.bio}
             avatar_url={freelance.avatar_url}
+            index={index}
           />
         ))}
 
